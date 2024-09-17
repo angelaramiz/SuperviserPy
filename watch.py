@@ -7,7 +7,7 @@ from watchdog.events import FileSystemEventHandler
 
 # Configuración 
 origen = "C:\\Users\\angel\\Desktop\\watch\\ejemplo"
-ruta_creados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\creados"
+ruta_creados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\nuevos"
 ruta_eliminados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\eliminados"
 ruta_modificados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\modificados"
 
