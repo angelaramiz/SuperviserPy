@@ -7,7 +7,7 @@ from watchdog.events import FileSystemEventHandler
 
 # Configuración 
 origen = "C:\\Users\\angel\\Desktop\\watch\\ejemplo"
-ruta_creados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\nuevos"
+ruta_creados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\creados"
 ruta_eliminados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\eliminados"
 ruta_modificados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\modificados"
 
@@ -24,6 +24,21 @@ regex_version = r"[-_]\d+\.\d+(\.\d+)?"
 
 # Tiempo de gracia para detectar la creación/eliminación como un par relacionado (en segundos)
 tiempo_gracia = 3
+
+# Número máximo de intentos para acceder al archivo y copiarlo
+max_reintentos = 5
+
+def intentar_copiar_archivo(origen, destino, intentos=0):
+    try:
+        shutil.copy2(origen, destino)
+        print(f"Archivo copiado a {destino}: {origen}")
+    except PermissionError as e:
+        if intentos < max_reintentos:
+            print(f"Error: {e}. Reintentando en 1 segundo... (Intento {intentos + 1})")
+            time.sleep(1)
+            intentar_copiar_archivo(origen, destino, intentos + 1)
+        else:
+            print(f"No se pudo copiar el archivo {origen} después de {max_reintentos} intentos. Error: {e}")
 
 # Handler para eventos del sistema de archivos
 class ModificacionHandler(FileSystemEventHandler):
@@ -47,7 +62,7 @@ class ModificacionHandler(FileSystemEventHandler):
                 nombre_carpeta = f"remplazo y actualizacion de archivo {archivo_eliminado_encontrado}"
                 ruta_carpeta = os.path.join(ruta_creados, nombre_carpeta)
                 os.makedirs(ruta_carpeta, exist_ok=True)
-                shutil.copy2(event.src_path, ruta_carpeta)
+                intentar_copiar_archivo(event.src_path, ruta_carpeta)
                 nombre_txt = os.path.join(ruta_carpeta, f"{archivo_eliminado_encontrado}_eliminado_.txt")
                 with open(nombre_txt, 'w') as f:
                     f.write(f"Archivo eliminado: {archivo_eliminado_encontrado}")
@@ -57,8 +72,7 @@ class ModificacionHandler(FileSystemEventHandler):
                 # Registrar el archivo como creado recientemente para manejar posibles eliminaciones posteriores
                 archivos_creados_recientes[nombre_archivo_creado] = time.time()
                 # Copiar el archivo como nuevo si no se encuentra una eliminación
-                shutil.copy2(event.src_path, ruta_creados)
-                print(f"Archivo copiado a {ruta_creados}: {event.src_path}")
+                intentar_copiar_archivo(event.src_path, ruta_creados)
 
     def on_deleted(self, event):
         if event.is_directory:
@@ -112,7 +126,7 @@ class ModificacionHandler(FileSystemEventHandler):
 
     def procesar_modificacion(self, archivo_modificado):
         nombre_archivo_modificado = os.path.basename(archivo_modificado)
-        shutil.copy2(archivo_modificado, ruta_modificados)
+        intentar_copiar_archivo(archivo_modificado, ruta_modificados)
         nombre_txt = os.path.join(ruta_modificados, f"{nombre_archivo_modificado}_modificado_.txt")
         with open(nombre_txt, 'w') as f:
             f.write(f"Archivo modificado: {nombre_archivo_modificado}")
