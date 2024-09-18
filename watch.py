@@ -7,7 +7,7 @@ from watchdog.events import FileSystemEventHandler
 
 # Configuración 
 origen = "C:\\Users\\angel\\Desktop\\watch\\ejemplo"
-ruta_creados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\nuevos"
+ruta_creados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\creados"
 ruta_eliminados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\eliminados"
 ruta_modificados = "C:\\Users\\angel\\Desktop\\watch\\copiaJa\\modificados"
 
@@ -20,7 +20,8 @@ archivos_eliminados = {}  # Diccionario para rastrear archivos eliminados recien
 archivos_creados_recientes = {}  # Diccionario para rastrear archivos creados recientemente
 
 # Expresión regular para eliminar las versiones de los nombres de archivos
-regex_version = r"[-_]\d+\.\d+(\.\d+)?"
+# Ahora también incluye versiones como "-build.0821" o "_build.0821"
+regex_version = r"[-_](\d+\.\d+(\.\d+)?|build\.\d+)"
 
 # Tiempo de gracia para detectar la creación/eliminación como un par relacionado (en segundos)
 tiempo_gracia = 3
@@ -133,7 +134,7 @@ class ModificacionHandler(FileSystemEventHandler):
         print(f"Archivo modificado copiado a {ruta_modificados} y registro creado.")
 
     def comparar_nombres(self, nombre1, nombre2):
-        # Quitar las versiones de los nombres
+        # Quitar las versiones de los nombres, incluyendo las versiones con "build"
         nombre1_sin_version = re.sub(regex_version, '', nombre1)
         nombre2_sin_version = re.sub(regex_version, '', nombre2)
         return nombre1_sin_version == nombre2_sin_version
