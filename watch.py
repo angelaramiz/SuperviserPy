@@ -7,7 +7,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 # Configuración de directorios
-origen = "C:\\Users\\angel\\OneDrive\\Escritorio\\watch\\ejemplo"
+origen = "C:\\Users\\angel\\curseforge\\minecraft\\Instances\\Server\\mods"
 ruta_destino = "C:\\Users\\angel\\OneDrive\\Escritorio\\SuperviserPy\\copiaJar"
 
 # Obtener fecha y hora actuales
