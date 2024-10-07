@@ -8,7 +8,7 @@ from watchdog.events import FileSystemEventHandler
 
 # Configuración de directorios
 origen = "C:\\Users\\angel\\OneDrive\\Escritorio\\watch\\ejemplo"
-ruta_destino = "C:\\Users\\angel\\OneDrive\\Escritorio\\watch\\copiaJa"
+ruta_destino = "C:\\Users\\angel\\OneDrive\\Escritorio\\SuperviserPy\\copiaJar"
 
 # Obtener fecha y hora actuales
 fecha_actual = datetime.now().strftime("%dD-%mM-%YY")
